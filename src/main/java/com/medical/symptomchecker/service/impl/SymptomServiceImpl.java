@@ -36,10 +36,10 @@ public class SymptomServiceImpl implements SymptomService {
         try {
 
             String prompt =
-                    "You are a medical assistant. Based on these symptoms, respond exactly like this:\n\n" +
-                            "Possible Conditions: <one short line>\n" +
+                    "You are a medical assistant. Based on these symptoms, respond like:\n\n" +
+                            "Possible Conditions: <one line>\n" +
                             "Risk Level: Low / Medium / High\n" +
-                            "Advice: <one short line>\n\n" +
+                            "Advice: <one line>\n\n" +
                             "Symptoms: " + request.getSymptoms();
 
             HttpHeaders headers = new HttpHeaders();
@@ -51,10 +51,11 @@ public class SymptomServiceImpl implements SymptomService {
             message.put("content", prompt);
 
             Map<String, Object> body = new HashMap<>();
-            body.put("model", "meta-llama/llama-3.1-8b-instruct");
+            body.put("model", "openai/gpt-3.5-turbo");
             body.put("messages", List.of(message));
 
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> entity =
+                    new HttpEntity<>(body, headers);
 
             String rawResponse =
                     restTemplate.postForObject(
@@ -63,7 +64,9 @@ public class SymptomServiceImpl implements SymptomService {
                             String.class
                     );
 
+            ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(rawResponse);
+
             aiText = root.get("choices")
                     .get(0)
                     .get("message")
@@ -71,17 +74,10 @@ public class SymptomServiceImpl implements SymptomService {
                     .asText();
 
         } catch (Exception e) {
-            aiText =
-                    "Possible Conditions: Data temporarily unavailable\n" +
-                            "Risk Level: Medium\n" +
-                            "Advice: Please consult a doctor.";
+            aiText = "Possible Conditions: AI temporarily unavailable\n" +
+                    "Risk Level: Medium\n" +
+                    "Advice: Please consult a doctor.";
         }
-
-        // Save in database
-        SymptomLog log = new SymptomLog();
-        log.setSymptoms(request.getSymptoms());
-        log.setResult(aiText);
-        repository.save(log);
 
         String possibleConditions = extract(aiText, "Possible Conditions:");
         String riskLevel = extract(aiText, "Risk Level:");
@@ -95,6 +91,7 @@ public class SymptomServiceImpl implements SymptomService {
 
         return new SymptomResponse("Symptoms analyzed", analysis);
     }
+
 
     private String extract(String text, String key) {
         int start = text.indexOf(key);
