@@ -6,8 +6,8 @@ import com.medical.symptomchecker.service.SymptomService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/symptoms")
-@CrossOrigin(origins = "https://symptom-checker-psi.vercel.app/")
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class SymptomController {
 
     private final SymptomService service;
@@ -17,8 +17,14 @@ public class SymptomController {
     }
 
     @PostMapping("/symptoms")
-    public SymptomResponse saveSymptoms(@RequestBody SymptomRequest request) {
+    public SymptomResponse analyzeSymptoms(@RequestBody SymptomRequest request) {
         return service.saveSymptoms(request);
     }
+
+    @GetMapping("/health")
+    public String health() {
+        return "Backend is alive";
+    }
 }
+
 
