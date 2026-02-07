@@ -8,7 +8,7 @@ public class HuggingFaceConfig {
             "https://openrouter.ai/api/v1/chat/completions";
 
     public static final String HF_API_TOKEN =
-            "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";   // <-- YOUR OpenRouter key here
+            "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";   // <-- YOUR OpenRouter key here
 }
 
 
