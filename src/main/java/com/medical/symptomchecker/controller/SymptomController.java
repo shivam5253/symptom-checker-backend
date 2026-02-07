@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")   // VERY IMPORTANT FOR VERCEL
 public class SymptomController {
 
     private final SymptomService service;
@@ -26,5 +26,6 @@ public class SymptomController {
         return "Backend is alive";
     }
 }
+
 
 
