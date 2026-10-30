@@ -67,7 +67,7 @@ public class SymptomServiceImpl implements SymptomService {
             message.put("content", prompt);
 
             Map<String, Object> body = new HashMap<>();
-            body.put("model", "openai/gpt-3.5-turbo");
+            body.put("model", "openrouter/free");
             body.put("messages", List.of(message));
 
             HttpEntity<Map<String, Object>> entity =
